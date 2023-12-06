@@ -2,7 +2,7 @@ import random
 import time
 
 seeDealerCards = False # Set to true to see dealers cards for testing
-winCounter = 0
+winCounter = 4 # Easter Egg counter
 
 #Card class for easy formated printing of cards
 class Card:
@@ -42,7 +42,7 @@ class Deck():
 
 #Class for hand of player and dealer, handles drawing cards, displaying whole hands, and calculating value of hands
 class Hand(Deck):
-    #Hand constructor, returns true if opening hand is blackjack
+    #Hand constructor
     def __init__(self, deck):
         self.deck = []
         for x in range(2):
@@ -59,6 +59,7 @@ class Hand(Deck):
             print("And a face down card")
         print("")
     
+    #Display player hand and value
     def displayPlayer(self):
         print("You have:")
         for x in range(len(self.deck)-1):
@@ -67,6 +68,7 @@ class Hand(Deck):
         print("Value: " + str(self.getValue()))
         print("")
 
+    #Displays hand and value w/o first print statement
     def displayHand(self):
         for x in range(len(self.deck)-1):
             print("A " + str(self.deck[x]))
@@ -74,11 +76,13 @@ class Hand(Deck):
         print("Value: " + str(self.getValue()))
         print("")
 
+    #draw card from top of deck, add to current hand, and return card
     def drawCard(self, deck):
         card = deck.deck.pop(0)
         self.deck.append(card)
         return card
     
+    #Calculates blackjack value of hand, if aces are present then the heighest value below 22 is returned
     def getValue(self):
         values = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "J":10, "Q":10, "K":10, "A":11}
         aces = 0
@@ -93,6 +97,7 @@ class Hand(Deck):
                 handValue -= 10
         return handValue
     
+    #returns true if hand is blackjack
     def blackJackCheck(self):
         hand = []
         blackJack = {"10", "J", "Q", "K", "A"}
@@ -104,6 +109,7 @@ class Hand(Deck):
         else:
             return False
             
+#Print title and waits for user input
 def printTitle():
     for x in range(20):
         print("")
@@ -124,6 +130,7 @@ def printTitle():
     input("Press Enter to Continue...")
     print("")
 
+#Prints win screen and waits for user input for restart
 def printWin(blackJack = False):
     global winCounter
     winCounter += 1
@@ -145,6 +152,7 @@ def printWin(blackJack = False):
     print("")
     input("Press any key to restart...")
 
+#Prints loss screen and waits for user input for restart
 def printLoss():
     global winCounter
     winCounter = 0
@@ -157,6 +165,22 @@ def printLoss():
     print("")
     input("Press any key to restart...")
 
+#Print easter egg
+def printEasterEgg():
+    for x in range(20):
+        print("")
+    print("You have won 5 times in a row")
+    print("The pit boss suspects you of cheating and has kicked you out of the casino")
+    print(" _______                                                   _                 _                      _ ")
+    print("(_______)                                      _          | |           _   (_)                    | |")
+    print(" _         ___   ____    ____   ____  _____  _| |_  _   _ | |  _____  _| |_  _   ___   ____    ___ | |")
+    print("| |       / _ \ |  _ \  / _  | / ___)(____ |(_   _)| | | || | (____ |(_   _)| | / _ \ |  _ \  /___)|_|")
+    print("| |_____ | |_| || | | |( (_| || |    / ___ |  | |_ | |_| || | / ___ |  | |_ | || |_| || | | ||___ | _ ")
+    print(" \______) \___/ |_| |_| \___ ||_|    \_____|   \__)|____/  \_)\_____|   \__)|_| \___/ |_| |_|(___/ |_|")
+    print("                       (_____|                                                                        ")
+    input("")
+
+#Validates user input for hit or stand
 def choiceCheck(choice):
     isValid = False
     while(not isValid):
@@ -176,16 +200,17 @@ def choiceCheck(choice):
             choice = input("Please choose \"H\" or \"Hit\" to hit or \"S\" or \"Stand\" to stand: ")
             # print("3")
 
+#Core game loop
 while True:
-    #game set up
+    #time between prints for readability
     sleepTime = 0.65
+
+    #easter egg
     if winCounter == 5:
-        print("You have won 5 times in a row")
-        print("The pit boss suspects you of cheating and has kick you out of the casino")
-        print("Congratulations!")
-        input("")
+        printEasterEgg()
         break
 
+    #Game setup
     gameOver = False
     printTitle()
 
@@ -202,6 +227,7 @@ while True:
     playerHand.displayPlayer()
     time.sleep(sleepTime)
 
+    #Blackjack check
     if dealerHand.blackJackCheck() and playerHand.blackJackCheck():
         print("Both Player and Dealer have Blackjack")
         print("You Tie")

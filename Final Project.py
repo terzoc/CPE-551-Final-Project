@@ -1,4 +1,6 @@
 import random
+seeDealerCards = True # Set to true to see dealers cards for testing
+
 class Card:
     def __init__(self, key):
         self.code = key
@@ -37,7 +39,10 @@ class Hand(Deck):
         print("The Dealer has:")
         for x in range(len(self.deck)-1):
             print("A " + str(self.deck[x]))
-        print("And a face down card")
+        if seeDealerCards:
+            print("And a " + str(self.deck[len(self.deck)-1]))
+        else:
+            print("And a face down card")
         print("")
     
     def displayPlayer(self):
@@ -48,7 +53,9 @@ class Hand(Deck):
         print("")
 
     def drawCard(self, deck):
-        self.deck.append(deck.deck.pop(0))
+        card = deck.deck.pop(0)
+        self.deck.append(card)
+        return card
     
     def getValue(self):
         values = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "J":10, "Q":10, "K":10, "A":11}
@@ -104,6 +111,7 @@ def choiceCheck(choice):
             # print("3")
 
 while True:
+    #game set up
     gameOver = False
     printTitle()
 
@@ -117,12 +125,13 @@ while True:
     dealerHand.displayDealer()
     playerHand.displayPlayer()
     
+    #Player chooses hit or stand
     isStanding = False
     while(not isStanding):
         if(choiceCheck(input("Would you like to hit or stand: ")) == "hit"):
             print("")
-            playerHand.drawCard(mainDeck)
-            print("The dealer hands you a card")
+            
+            print("The dealer hands you a " + str(playerHand.drawCard(mainDeck)))
             print("")
             playerHand.displayPlayer()
             if playerHand.getValue() > 21:
@@ -135,7 +144,19 @@ while True:
         print("Game Over")
         input("Press enter to start a new game")
         continue
-    print("didnt get this far")
+    
+    #Dealer draws cards
+    print("The dealer will now draw cards, the deal must stand on 17. (Soft 17 rules)")
+    while(True):
+        if dealerHand.getValue() < 17 :
+            print("The dealer drew a " + str(dealerHand.drawCard(mainDeck)))
+            print("")
+        else:
+            break
+    
+    print("Your cards value is: " + str(playerHand.getValue()))
+    print("The dealers card value is: " + str(dealerHand.getValue()))
+    input("Press anykey to restart")
         
     
 

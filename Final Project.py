@@ -47,7 +47,6 @@ class Hand(Deck):
         self.deck = []
         for x in range(2):
             self.deck.append(deck.deck.pop(0))
-        return blackJackCheck(self.deck)
     
     #Displays dealers hand without showing facedown card, has option to always show dealers facedown card for testing
     def displayDealer(self):
@@ -65,12 +64,14 @@ class Hand(Deck):
         for x in range(len(self.deck)-1):
             print("A " + str(self.deck[x]))
         print("And a " + str(self.deck[len(self.deck)-1]))
+        print("Value: " + str(self.getValue()))
         print("")
 
     def displayHand(self):
         for x in range(len(self.deck)-1):
             print("A " + str(self.deck[x]))
         print("And a " + str(self.deck[len(self.deck)-1]))
+        print("Value: " + str(self.getValue()))
         print("")
 
     def drawCard(self, deck):
@@ -80,26 +81,32 @@ class Hand(Deck):
     
     def getValue(self):
         values = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "J":10, "Q":10, "K":10, "A":11}
-        ace = False
+        aces = 0
         handValue = 0
         for x in self.deck:
             code = x.code[:-1]
             if code == "A":
-                ace = True
+                aces += 1
             handValue += values[code]
-        if ace and handValue > 21:
-            handValue -= 10
+        for x in range(aces):
+            if aces > 0 and handValue > 21:
+                handValue -= 10
         return handValue
     
-    def blackJackCheck(deck):
-        hand = {}
+    def blackJackCheck(self):
+        hand = []
         blackJack = {"10", "J", "Q", "K", "A"}
-        for x in deck:
+        for x in self.deck:
             hand.append(x.code[:-1])
-        if 
-            
+        hand = set(hand)
+        if hand == hand.intersection(blackJack) and self.getValue() == 21:
+            return True
+        else:
+            return False
             
 def printTitle():
+    for x in range(20):
+        print("")
     print(" ______                 _                      _______                       _                _  ")
     print("(_____ \           _   | |                    (_______)                     (_)              | | ")
     print(" _____) ) _   _  _| |_ | |__    ___   ____        _     _____   ____  ____   _  ____   _____ | | ")
@@ -114,16 +121,41 @@ def printTitle():
     print("             | |__)  )| | / ___ |( (___ |  _ (   | |/ ___ |( (___ |  _ (  _ ")
     print("             |______/  \_)\_____| \____)|_| \_) _| |\_____| \____)|_| \_)|_|")
     print("                                               (__/                         ")
-    input("Press Enter to Continue")
+    input("Press Enter to Continue...")
     print("")
 
-def printWin():
+def printWin(blackJack = False):
     global winCounter
     winCounter += 1
+    if blackJack:
+        print(" ______   _                 _        _                _      _ ")
+        print("(____  \ | |               | |      (_)              | |    | |")
+        print(" ____)  )| |  _____   ____ | |  _    _  _____   ____ | |  _ | |")
+        print("|  __  ( | | (____ | / ___)| |_/ )  | |(____ | / ___)| |_/ )|_|")
+        print("| |__)  )| | / ___ |( (___ |  _ (   | |/ ___ |( (___ |  _ (  _ ")
+        print("|______/  \_)\_____| \____)|_| \_) _| |\_____| \____)|_| \_)|_|")
+        print("                                  (__/                         ")
+    
+    print(" _     _                         _         _ ")
+    print("| |   | |                       (_)       | |")
+    print("| |___| |  ___   _   _    _ _ _  _  ____  | |")
+    print("|_____  | / _ \ | | | |  | | | || ||  _ \ |_|")
+    print(" _____| || |_| || |_| |  | | | || || | | | _ ")
+    print("(_______| \___/ |____/    \___/ |_||_| |_||_|")
+    print("")
+    input("Press any key to restart...")
 
 def printLoss():
     global winCounter
     winCounter = 0
+    print(" _     _                  _                             _ ")
+    print("| |   | |                | |                           / )")
+    print("| |___| |  ___   _   _   | |   ___    ___  _____    _ | | ")
+    print("|_____  | / _ \ | | | |  | |  / _ \  /___)| ___ |  (_)| | ")
+    print(" _____| || |_| || |_| |  | | | |_| ||___ || ____|   _ | | ")
+    print("(_______| \___/ |____/    \_) \___/ (___/ |_____)  (_) \_)")
+    print("")
+    input("Press any key to restart...")
 
 def choiceCheck(choice):
     isValid = False
@@ -146,7 +178,7 @@ def choiceCheck(choice):
 
 while True:
     #game set up
-    sleepTime = 0.7
+    sleepTime = 0.65
     if winCounter == 5:
         print("You have won 5 times in a row")
         print("The pit boss suspects you of cheating and has kick you out of the casino")
@@ -169,6 +201,23 @@ while True:
     time.sleep(sleepTime)
     playerHand.displayPlayer()
     time.sleep(sleepTime)
+
+    if dealerHand.blackJackCheck() and playerHand.blackJackCheck():
+        print("Both Player and Dealer have Blackjack")
+        print("You Tie")
+        continue
+    elif playerHand.blackJackCheck():
+        # print("Black Jack")
+        # print("You win!")
+        printWin(True)
+        continue
+    elif dealerHand.blackJackCheck():
+        print("The dealer has:")
+        dealerHand.displayHand()
+        print("Dealer has Blacjack")
+        # print("you lose")
+        printLoss()
+        continue
     
     #Player chooses hit or stand
     isStanding = False
@@ -183,20 +232,18 @@ while True:
             time.sleep(sleepTime)
             if playerHand.getValue() > 21:
                 gameOver = True
-                print("You went over 21 (" + str(playerHand.getValue()) + ") and busted out")
+                print("You went over 21 (" + str(playerHand.getValue()) + ") and busted")
                 break
         else:
             isStanding = True
     if gameOver:
         time.sleep(sleepTime)
         printLoss()
-        print("Game Over")
-        input("Press enter to start a new game")
         continue
     
     #Dealer draws cards
     if dealerHand.getValue() < 17 :
-        print("The dealer will now draw cards, the deal must stand on 17. (Soft 17 rules)")
+        print("The dealer will now draw cards, the dealer must stand on 17. (Soft 17 rules)")
         print("")
         time.sleep(sleepTime)
         print("The dealer has:")
@@ -211,7 +258,8 @@ while True:
                 break
     else:
         time.sleep(sleepTime)
-        print("The dealer has:")
+        print("")
+        print("The dealer is standing and has:")
         dealerHand.displayHand()
 
     #See who wins
@@ -219,24 +267,29 @@ while True:
     dealerValue = dealerHand.getValue()
     time.sleep(sleepTime)
     if dealerValue > 21:
-        print("The dealer went over 21 and busted")
+        print("The dealer went over 21 (" + str(dealerValue) + ") and busted")
         printWin()
-        print("You win!")
+        # print("You win!")
     elif dealerValue < playerValue:
+        print("You have " + str(playerValue) + " and the dealer has " + str(dealerValue))
         printWin()
-        print("You Win!")
+        # print("You Win!")
     elif dealerValue > playerValue:
+        print("You have " + str(playerValue) + " but the dealer has " + str(dealerValue))
         printLoss()
-        print("You lose :(")
+        # print("You lose :(")
     else:
-        print("Tie")
+        print("You and the dealer have " + str(playerValue))
+        print("Tie :/")
+        print("")
+        input("Press any key to restart...")
 
     print("")
         
-    time.sleep(sleepTime)
-    print("Your cards value was: " + str(playerValue))
-    print("The dealers card value was: " + str(dealerValue))
-    input("Press any key to restart")
+    # time.sleep(sleepTime)
+    # print("Your cards value was: " + str(playerValue))
+    # print("The dealers card value was: " + str(dealerValue))
+
         
     
 

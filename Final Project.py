@@ -2,7 +2,7 @@ import random
 import time
 
 seeDealerCards = False # Set to true to see dealers cards for testing
-winCounter = 4 # Easter Egg counter
+winCounter = 0 # Easter Egg counter
 
 #Card class for easy formated printing of cards
 class Card:

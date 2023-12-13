@@ -4,7 +4,7 @@ import time
 seeDealerCards = False # Set to true to see dealers cards for testing
 winCounter = 0 # Easter Egg counter
 
-#Card class for easy formated printing of cards
+#Card class for easy formatted printing of cards
 class Card:
     #Card constructor
     def __init__(self, key):
@@ -12,7 +12,7 @@ class Card:
     
     #Formatted card printing
     def __str__(self):
-        valueKeys = {"2": "Two", "3" : "Three", "4" : "Four", "5" : "Five", "6" : "Six", "7" : "Seven", "8" : "Eigth", "9" : "Nine", "10" : "Ten", "J" : "Jack", "Q" : "Queen", "K" : "King", "A" : "Ace"}
+        valueKeys = {"2": "Two", "3" : "Three", "4" : "Four", "5" : "Five", "6" : "Six", "7" : "Seven", "8" : "Eight", "9" : "Nine", "10" : "Ten", "J" : "Jack", "Q" : "Queen", "K" : "King", "A" : "Ace"}
         suitKeys = {"H" : "Hearts", "D" : "Diamonds", "C" : "Clubs", "S" : "Spades"}
         return valueKeys[self.code[:-1]] + " of " + suitKeys[self.code[-1:]]
     
@@ -82,7 +82,7 @@ class Hand(Deck):
         self.deck.append(card)
         return card
     
-    #Calculates blackjack value of hand, if aces are present then the heighest value below 22 is returned
+    #Calculates blackjack value of hand, if aces are present then the highest value below 22 is returned
     def getValue(self):
         values = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "J":10, "Q":10, "K":10, "A":11}
         aces = 0
@@ -219,7 +219,7 @@ while True:
     dealerHand = Hand(mainDeck)
     playerHand = Hand(mainDeck)
 
-    print("The dealer has delt the cards.")
+    print("The dealer has dealt the cards.")
     print("")
     time.sleep(sleepTime)
     dealerHand.displayDealer()
@@ -240,7 +240,7 @@ while True:
     elif dealerHand.blackJackCheck():
         print("The dealer has:")
         dealerHand.displayHand()
-        print("Dealer has Blacjack")
+        print("Dealer has Blackjack")
         # print("you lose")
         printLoss()
         continue
